@@ -3,14 +3,144 @@
 <head>
   <meta charset="utf-8">
   <title>humancorp.xyz</title>
-  <style>body{font-family:system-ui;max-width:600px;margin:3rem auto}h1{color:#2563eb}</style>
+  <!-- Iosevka font from CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/iosevka@5.0.0/index.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #000;
+      --fg: #f4f4f8;
+      --accent: #a5b4fc; /* pastel indigo */
+      --accent2: #fbcfe8; /* pastel pink */
+      --accent3: #bbf7d0; /* pastel green */
+      --ticker-bg: #000;
+      --ticker-fg: #fff;
+      --ticker-dot: #a5b4fc;
+      --link: #a5b4fc;
+      --link-hover: #fbcfe8;
+      --shadow: 0 2px 8px #0002;
+    }
+    html, body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Iosevka', 'Fira Mono', 'Menlo', 'monospace';
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+    body {
+      max-width: 600px;
+      margin: 3rem auto;
+      padding-top: 2.5em;
+      box-sizing: border-box;
+      height: calc(100vh - 3rem);
+      overflow: hidden;
+    }
+    h1 {
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5em;
+    }
+    a {
+      color: var(--link);
+      text-decoration: underline dotted var(--accent2) 2px;
+      text-underline-offset: 0.18em;
+      transition: color 0.2s, text-decoration-color 0.2s;
+    }
+    a:hover {
+      color: var(--link-hover);
+      text-decoration-color: var(--accent3);
+    }
+    #ticker-container {
+      width: 100vw;
+      overflow: hidden;
+      background: var(--ticker-bg);
+      color: var(--ticker-fg);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      height: 2.5em;
+      display: flex;
+      align-items: center;
+      box-shadow: var(--shadow);
+      border-bottom: 1.5px dotted var(--ticker-dot);
+      user-select: none;
+    }
+    #ticker {
+      white-space: nowrap;
+      display: inline-block;
+      will-change: transform;
+    }
+    #ticker-text {
+      text-decoration: underline dotted var(--ticker-dot) 2px;
+      text-underline-offset: 0.2em;
+      font-family: 'Iosevka', 'Fira Mono', 'Menlo', 'monospace';
+      letter-spacing: 0.12em;
+    }
+    .pastel {
+      background: var(--accent3);
+      color: #232336;
+      border-radius: 0.3em;
+      padding: 0.1em 0.4em;
+      font-weight: 600;
+    }
+    hr {
+      border: none;
+      border-top: 1.5px solid var(--accent2);
+      margin: 2em 0;
+    }
+  </style>
 </head>
 <body>
+  <div id="ticker-container">
+    <div id="ticker">
+      <span id="ticker-text">humancorp • </span>
+    </div>
+  </div>
   <h1>Human Tools</h1>
-  <p>Simple. Self-hosted. Yours forever.</p>
-  <p><a href="https://github.com/humancorp-xyz/edit">HumanEdit</a> • 
+  <p><span class="pastel">Simple. Self-hosted. Yours forever.</span></p>
+  <p>
+     <a href="https://github.com/humancorp-xyz/edit">HumanEdit</a> • 
      <a href="https://github.com/humancorp-xyz/budget">HumanBudget</a> • 
-     <a href="https://github.com/humancorp-xyz/plan">HumanPlan</a></p>
-  <p>Tools that do one thing. No AI. No signup.</p>
+     <a href="https://github.com/humancorp-xyz/plan">HumanPlan</a>
+  </p>
+  <hr>
+  <p>Tools that do one thing. <span class="pastel">No AI Agent bullsh*t.</span> No signup.</p>
+  <script>
+    // Dynamically fill the ticker with enough text to cover the viewport
+    const tickerText = document.getElementById('ticker-text');
+    const baseText = 'humancorp • ';
+    const ticker = document.getElementById('ticker');
+
+    function fillTicker() {
+      tickerText.textContent = baseText;
+      // Temporarily show to measure width
+      tickerText.style.display = 'inline';
+      let repeatCount = Math.ceil(window.innerWidth / tickerText.offsetWidth) + 3;
+      tickerText.textContent = baseText.repeat(repeatCount);
+    }
+
+    fillTicker();
+    window.addEventListener('resize', fillTicker);
+
+    // Animation
+    let pos = 0;
+    function animateTicker() {
+      pos -= 1;
+      if (Math.abs(pos) >= tickerText.offsetWidth / 2) {
+        pos = 0;
+      }
+      ticker.style.transform = `translateX(${pos}px)`;
+      requestAnimationFrame(animateTicker);
+    }
+    animateTicker();
+  </script>
 </body>
 </html>
