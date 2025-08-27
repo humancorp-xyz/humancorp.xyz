@@ -31,18 +31,21 @@
       transition: background 0.3s, color 0.3s;
     }
     body {
-      max-width: 600px;
+      max-width: 900px;
       margin: 3rem auto;
       padding-top: 2.5em;
       box-sizing: border-box;
       height: calc(100vh - 3rem);
       overflow: hidden;
+      font-size: 1.1rem;
+      line-height: 1.6;
     }
     h1 {
       color: var(--accent);
       font-weight: 700;
       letter-spacing: 0.05em;
       margin-bottom: 0.5em;
+      font-size: 2.5rem;
     }
     a {
       color: var(--link);
@@ -112,33 +115,47 @@
   <hr>
   <p>Tools that do one thing. <span class="pastel">No AI Agent bullsh*t.</span> No signup.</p>
   <script>
-    // Dynamically fill the ticker with enough text to cover the viewport
     const tickerText = document.getElementById('ticker-text');
     const baseText = 'humancorp • ';
     const ticker = document.getElementById('ticker');
+    let pos = 0;
+    let animationStarted = false;
+    let singleTextWidth = 0;
 
     function fillTicker() {
+      // First, measure a single instance of the text
       tickerText.textContent = baseText;
-      // Temporarily show to measure width
-      tickerText.style.display = 'inline';
-      let repeatCount = Math.ceil(window.innerWidth / tickerText.offsetWidth) + 3;
+      singleTextWidth = tickerText.offsetWidth;
+      
+      // Calculate how many repetitions we need to fill the screen plus buffer
+      const repeatCount = Math.ceil(window.innerWidth / singleTextWidth) + 2;
       tickerText.textContent = baseText.repeat(repeatCount);
+      
+      // Reset position when resizing
+      pos = 0;
+      
+      if (!animationStarted) {
+        animationStarted = true;
+        requestAnimationFrame(animateTicker);
+      }
     }
 
-    fillTicker();
-    window.addEventListener('resize', fillTicker);
-
-    // Animation
-    let pos = 0;
     function animateTicker() {
-      pos -= 1;
-      if (Math.abs(pos) >= tickerText.offsetWidth / 2) {
-        pos = 0;
+      if (singleTextWidth > 0) {
+        pos -= 0.5; // Slower animation speed
+        
+        // Reset when we've moved one complete text width
+        if (Math.abs(pos) >= singleTextWidth) {
+          pos = 0;
+        }
+        
+        ticker.style.transform = `translateX(${pos}px)`;
       }
-      ticker.style.transform = `translateX(${pos}px)`;
       requestAnimationFrame(animateTicker);
     }
-    animateTicker();
+
+    window.addEventListener('load', fillTicker);
+    window.addEventListener('resize', fillTicker);
   </script>
 </body>
 </html>
